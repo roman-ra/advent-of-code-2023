@@ -5,10 +5,6 @@
 #include <cstdint>
 #include <regex>
 
-#define NUM_RED_CUBES   12
-#define NUM_GREEN_CUBES 13
-#define NUM_BLUE_CUBES  14
-
 
 int main(int argc, char *argv[])
 {
@@ -24,11 +20,10 @@ int main(int argc, char *argv[])
 
     while (std::getline(input, line)) {
         if (line.length() < 1) { continue; }
-        
-        size_t game_id_end = line.find(':');
-        uint64_t game_id = std::atoll(line.substr(5, game_id_end - 5).c_str());
 
-        bool game_is_possible = true;
+        uint64_t max_red   {0};
+        uint64_t max_green {0};
+        uint64_t max_blue  {0};
 
         auto shows = std::sregex_iterator(line.begin(), line.end(), shows_regex);
 
@@ -40,19 +35,17 @@ int main(int argc, char *argv[])
             switch (color_str[0])
             {
             case 'r':
-                game_is_possible &= (num <= NUM_RED_CUBES); break;
+                if (num > max_red)   { max_red = num; } break;
             case 'g':
-                game_is_possible &= (num <= NUM_GREEN_CUBES); break;
+                if (num > max_green) { max_green = num; } break;
             case 'b':
-                game_is_possible &= (num <= NUM_BLUE_CUBES); break;
+                if (num > max_blue)  { max_blue = num; } break;
             default:
                 break;
             }
         }
 
-        if (game_is_possible) {
-            sum += game_id;
-        }
+        sum += max_red * max_green * max_blue;
     }
 
     input.close();
